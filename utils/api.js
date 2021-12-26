@@ -6,7 +6,7 @@ export async function postGraphQlData (query, variables) {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      'x-hasura-admin-secret': process.env.SECRET
+      'x-hasura-admin-secret': process.env.HASURA_SECRET
     },
     body: JSON.stringify({
       query,

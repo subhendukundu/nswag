@@ -1,5 +1,5 @@
-import { postGraphQlData } from '../utils/api';
-import { stripe } from '../utils/stripe';
+import { postGraphQlData } from '../../../utils/stripe';
+import { stripe } from '../../../utils/stripe';
 
 
 export default function stripeCheckout(event, context) {
