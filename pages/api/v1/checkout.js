@@ -2,9 +2,13 @@ import { postGraphQlData } from '../../../utils/stripe';
 import { stripe } from '../../../utils/stripe';
 
 
-export default function stripeCheckout(event, context) {
+export default function stripeCheckout(event, res) {
   try {
-    const body = JSON.parse(event.body);
+    if (!event.method === 'POST') {
+      return res.status(401).json({ message: 'Invalid Method' });
+    }
+    console.log('<====== Checkout Body ======>', event.body);
+    const { body } = event;
     console.log('<====== Checkout Body ======>', JSON.stringify(body));
     const {
       input: { object },
@@ -40,18 +44,12 @@ export default function stripeCheckout(event, context) {
       cancel_url: `${process.env.FRONTEND_APP_URL}/events/${metadata?.event_id}`
     });
     console.log('sessionData', JSON.stringify(sessionData)); */
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        // url: sessionData.url
-        url: userId
-      })
-    };
+    return res.status(200).json({
+      // url: sessionData.url
+      url: userId
+    })
   } catch (e) {
     console.log('error------->', e);
-    return {
-      statusCode: 500,
-      body: JSON.stringify(e)
-    };
+    return res.status(500).json({ message: e.message });
   }
 };
