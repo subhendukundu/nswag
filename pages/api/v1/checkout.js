@@ -4,7 +4,7 @@ import { stripe } from '../../../utils/stripe';
 
 export default function stripeCheckout(event, res) {
   try {
-    if (!event.method === 'POST') {
+    if (event.method !== 'POST') {
       return res.status(401).json({ message: 'Invalid Method' });
     }
     console.log('<====== Checkout Body ======>', event.body);
@@ -15,7 +15,7 @@ export default function stripeCheckout(event, res) {
       session_variables: session
     } = body;
     const { metadata } = object;
-    const userId = session['x-hasura-user-id'];
+    const userId = session?.['x-hasura-user-id'];
 
     /* const usersWithTicket = await postGraphQlData(getUserByPkWithTicket, {
       user_id: userId,
