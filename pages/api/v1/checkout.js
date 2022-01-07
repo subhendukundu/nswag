@@ -5,7 +5,7 @@ import { stripe } from '../../../utils/stripe';
 export default function stripeCheckout(event, res) {
   try {
     if (event.method !== 'POST') {
-      return res.status(401).json({ message: 'Invalid Method' });
+      res.status(401).json({ message: 'Invalid Method' });
     }
     console.log('<====== Checkout Body ======>', event.body);
     const { body } = event;
@@ -44,12 +44,12 @@ export default function stripeCheckout(event, res) {
       cancel_url: `${process.env.FRONTEND_APP_URL}/events/${metadata?.event_id}`
     });
     console.log('sessionData', JSON.stringify(sessionData)); */
-    return res.status(200).json({
+    res.status(200).json({
       // url: sessionData.url
       url: userId
     })
   } catch (e) {
     console.log('error------->', e);
-    return res.status(500).json({ message: e.message });
+    res.status(500).json({ message: e.message });
   }
 };
