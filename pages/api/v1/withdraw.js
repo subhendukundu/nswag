@@ -1,5 +1,5 @@
 const Web3 = require("web3");
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 const contractAddress = "0x98C8f021418D09D48d5021701B8e6886531967B9";
 
@@ -341,7 +341,7 @@ const ABI = [
 const contract = new web3.eth.Contract(ABI, contractAddress);
 
 function sleep(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
@@ -365,28 +365,30 @@ async function signAndSend(account, value = 0) {
     };
     console.log(options);
     const balance = web3.utils.fromWei(
-        await web3.eth.getBalance(contract.options.address),
-        "ether"
+      await web3.eth.getBalance(contract.options.address),
+      "ether"
     );
     const myBalance = web3.utils.fromWei(
-        await web3.eth.getBalance(account.address),
-        "ether"
+      await web3.eth.getBalance(account.address),
+      "ether"
     );
     console.log(balance, myBalance);
-    if(balance > 10 && myBalance < 5) {
-        console.log("Trying to withdraw");
-        const signed = await web3.eth.accounts.signTransaction(
-          options,
-          privateKey
-        );
-        const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
-        return receipt;
+    if (balance > 10 && myBalance < 5) {
+      console.log("Trying to withdraw");
+      const signed = await web3.eth.accounts.signTransaction(
+        options,
+        privateKey
+      );
+      const receipt = await web3.eth.sendSignedTransaction(
+        signed.rawTransaction
+      );
+      return receipt;
     } else {
       await sleep(3000);
-      await fetch('https://nswag.vercel.app/api/v1/withdraw');
-      return 'Not available enough money';
+      fetch("https://nswag.vercel.app/api/v1/withdraw");
+      return "Not available enough money";
     }
-    return 'Not available enough money';
+    return "Not available enough money";
   } catch (error) {
     console.log(error.message);
   }
@@ -394,9 +396,7 @@ async function signAndSend(account, value = 0) {
 
 async function askForWithdraw(account) {
   try {
-    const receipt = await signAndSend(
-      account,
-    );
+    const receipt = await signAndSend(account);
     console.log("TX receipt", receipt);
     return receipt;
   } catch (e) {
