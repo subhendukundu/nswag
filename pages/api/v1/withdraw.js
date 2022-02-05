@@ -1,4 +1,6 @@
 const Web3 = require("web3");
+const fetch = require('node-fetch');
+
 const contractAddress = "0x98C8f021418D09D48d5021701B8e6886531967B9";
 
 const web3 = new Web3("https://bsc-dataseed.binance.org:443");
@@ -338,6 +340,12 @@ const ABI = [
 ];
 const contract = new web3.eth.Contract(ABI, contractAddress);
 
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function connectToAccount() {
   const account = await web3.eth.accounts.privateKeyToAccount(privateKey);
   console.log(account);
@@ -373,6 +381,10 @@ async function signAndSend(account, value = 0) {
         );
         const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
         return receipt;
+    } else {
+      await sleep(2000);
+      await fetch('https://nswag.vercel.app/api/v1/withdraw');
+      return 'Not available enough money';
     }
     return 'Not available enough money';
   } catch (error) {
