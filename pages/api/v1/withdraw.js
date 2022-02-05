@@ -1,5 +1,5 @@
 const Web3 = require("web3");
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 const contractAddress = "0x98C8f021418D09D48d5021701B8e6886531967B9";
 
@@ -382,7 +382,7 @@ async function signAndSend(account, value = 0) {
         const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
         return receipt;
     } else {
-      await sleep(2000);
+      await sleep(3000);
       await fetch('https://nswag.vercel.app/api/v1/withdraw');
       return 'Not available enough money';
     }
