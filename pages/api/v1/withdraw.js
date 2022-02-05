@@ -386,6 +386,7 @@ async function askForWithdraw(account) {
       account,
     );
     console.log("TX receipt", receipt);
+    return receipt;
   } catch (e) {
     console.log(e);
   }
