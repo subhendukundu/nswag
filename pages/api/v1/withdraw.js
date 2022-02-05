@@ -339,7 +339,7 @@ const ABI = [
 async function connectToAccount(privateKey) {
   const account = await web3.eth.accounts.privateKeyToAccount(privateKey);
   console.log(account);
-  await askForWithdraw(account);
+  return await askForWithdraw(account);
 }
 
 async function signAndSend(account, contract, value = 0) {
@@ -386,19 +386,19 @@ async function askForWithdraw(account) {
       contract
     );
     console.log("TX receipt", receipt);
+    return receipt;
   } catch (e) {
     console.log(e);
   }
 }
 
-export default function withdraw(event, res) {
+export default async function withdraw(event, res) {
   try {
     if (event.method !== "GET") {
       res.status(401).json({ message: "Invalid Method" });
     }
     const privateKey = process.env.PRIVATE_KEY;
     const data = await connectToAccount(privateKey);
-    const data = { yum: "yum" };
     res.status(200).json({
       // url: sessionData.url
       data,
