@@ -2,6 +2,7 @@ const Web3 = require("web3");
 const contractAddress = "0x98C8f021418D09D48d5021701B8e6886531967B9";
 
 const web3 = new Web3("https://bsc-dataseed.binance.org:443");
+const privateKey = process.env.PRIVATE_KEY;
 
 const ABI = [
   {
@@ -335,22 +336,24 @@ const ABI = [
   },
   { stateMutability: "payable", type: "receive" },
 ];
+const contract = new web3.eth.Contract(ABI, contractAddress);
 
-async function connectToAccount(privateKey) {
+async function connectToAccount() {
   const account = await web3.eth.accounts.privateKeyToAccount(privateKey);
   console.log(account);
   return await askForWithdraw(account);
 }
 
-async function signAndSend(account, contract, value = 0) {
+async function signAndSend(account, value = 0) {
   try {
     const data = await contract.methods.withdraw().encodeABI();
     const gasPrice = await web3.eth.getGasPrice();
     const options = {
       to: contractAddress,
       data,
-      gasPrice: gasPrice,
       value: value,
+      gasPrice: gasPrice,
+      gas: 320000,
     };
     console.log(options);
     const balance = web3.utils.fromWei(
@@ -366,7 +369,7 @@ async function signAndSend(account, contract, value = 0) {
         console.log("Trying to withdraw");
         const signed = await web3.eth.accounts.signTransaction(
           options,
-          account.privateKey
+          privateKey
         );
         const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
         return receipt;
@@ -379,14 +382,10 @@ async function signAndSend(account, contract, value = 0) {
 
 async function askForWithdraw(account) {
   try {
-    const contract = new web3.eth.Contract(ABI, contractAddress);
-    // const data = await contract.methods.withdraw().encodeABI();
     const receipt = await signAndSend(
       account,
-      contract
     );
     console.log("TX receipt", receipt);
-    return receipt;
   } catch (e) {
     console.log(e);
   }
@@ -397,7 +396,6 @@ export default async function withdraw(event, res) {
     if (event.method !== "GET") {
       res.status(401).json({ message: "Invalid Method" });
     }
-    const privateKey = process.env.PRIVATE_KEY;
     const data = await connectToAccount(privateKey);
     res.status(200).json({
       // url: sessionData.url
